@@ -36,36 +36,22 @@ export const createTables = async (client) => {
         message TEXT NOT NULL,
         created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated TIMESTAMP ,
-        user_id UUID NOT NULL REFERENCES users (id)
-            ON DELETE CASCADE
-            ON UPDATE CASCADE)`;
-
-    await client.sql`
-    CREATE TABLE IF NOT EXISTS comments(
-        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-        msg_id UUID NOT NULL REFERENCES messages (id)
+        parent_id UUID REFERENCES messages (id)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
-        message TEXT NOT NULL,
-        created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated TIMESTAMP ,
         user_id UUID NOT NULL REFERENCES users (id)
             ON DELETE CASCADE
             ON UPDATE CASCADE)`;
 
     await client.sql`
     CREATE TABLE IF NOT EXISTS likes (
-        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         msg_id UUID NOT NULL REFERENCES messages (id)
-            ON DELETE CASCADE
-            ON UPDATE CASCADE,
-        comment_id UUID REFERENCES comments (id)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
         user_id UUID NOT NULL REFERENCES users (id)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
-        liked INTEGER NOT NULL)`;
+        PRIMARY KEY (msg_id, user_id))`;
 
     await client.sql`
     CREATE TABLE IF NOT EXISTS hashtag (
@@ -94,17 +80,6 @@ export const createTables = async (client) => {
         PRIMARY KEY (user_id, follow_id)
       )`;
 
-    await client.sql`
-      CREATE TABLE IF NOT EXISTS user_subscribes (
-          user_id UUID NOT NULL REFERENCES users(id)
-              ON DELETE CASCADE
-              ON UPDATE CASCADE,
-          tag_id UUID NOT NULL REFERENCES hashtag(id)
-              ON DELETE CASCADE
-              ON UPDATE CASCADE,
-          PRIMARY KEY (user_id, tag_id)
-        )`;
-
     return;
   } catch (error) {
     console.error("Error seeding users:", error);
@@ -113,8 +88,6 @@ export const createTables = async (client) => {
 };
 
 export const dropTables = async (client) => {
-  await client.sql`DROP TABLE IF EXISTS user_subscribes
-                CASCADE`;
   await client.sql`DROP TABLE IF EXISTS user_follows
                 CASCADE`;
   await client.sql`DROP TABLE IF EXISTS message_tags
@@ -123,8 +96,6 @@ export const dropTables = async (client) => {
                 CASCADE`;
   await client.sql`DROP TABLE IF EXISTS likes
                 CASCADE`;
-  await client.sql`DROP TABLE IF EXISTS comments
-                CASCADE`;              
   await client.sql`DROP TABLE IF EXISTS messages
                 CASCADE`;
   await client.sql`DROP TABLE IF EXISTS users

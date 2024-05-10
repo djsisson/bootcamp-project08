@@ -44,12 +44,8 @@ export const upsertTags = async (msgid, tags, client, del = false) => {
 
   if (tags.length == 0) return;
 
-  const reMapTags = Array.from(new Set(allTags.flat())).map((x) => ({
-    tag: x,
-  }));
-
   await client.sql
-    `INSERT INTO hashtag (tag) (SELECT tag FROM unnest(${tags}::text[]) as tag) ON CONFLICT DO NOTHING;`;
+    `INSERT INTO hashtag (tag) (SELECT DISTINCT tag FROM unnest(${tags}::text[]) as tag) ON CONFLICT DO NOTHING;`;
 
   await client.sql` INSERT INTO message_tags (SELECT m.id as msg_id, tag_id FROM messages AS m CROSS JOIN (select t.id as tag_id from hashtag as t WHERE t.tag = ANY(${tags})) WHERE m.id = ${msgid});`
 };

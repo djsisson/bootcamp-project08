@@ -58,26 +58,20 @@ const generateMessage = async (client, nummsg = 100) => {
     allTags.push(rndTags);
   }
 
-  return ({msgs: msgs, allTags: allTags});
+  return { msgs: msgs, allTags: allTags };
 };
 
 export const addMessages = async (client) => {
-  
   const { msgs, allTags } = await generateMessage(client, 100);
-
-  const reMapTags = Array.from(new Set(allTags.flat())).map((x) => ({
-    tag: x,
-  }));
 
   const { rows: msgIds } = await client.query(
     `INSERT INTO messages (message, created, user_id) SELECT message, created, user_id FROM json_populate_recordset(NULL::messages, $1) RETURNING id;`,
     [JSON.stringify(msgs)]
   );
 
-  const { rows: tagIds } = await client.query(
-    `INSERT INTO hashtag (tag) SELECT tag FROM json_populate_recordset(NULL::hashtag, $1) ON CONFLICT DO NOTHING RETURNING *;`,
-    [JSON.stringify(reMapTags)]
-  );
+  const { rows: tagIds } =
+    await client.sql`INSERT INTO hashtag (tag) (SELECT DISTINCT tag FROM unnest(${allTags.flat()}::text[]) as tag) ON CONFLICT DO NOTHING RETURNING *;`;
+
   const junction = msgIds
     .map((x, i) =>
       allTags[i].map((y) => ({
@@ -88,20 +82,41 @@ export const addMessages = async (client) => {
     .flat();
 
   await client.query(
-    `INSERT INTO message_tags (msg_id, tag_id) SELECT msg_id, tag_id FROM json_populate_recordset(NULL::message_tags, $1);`,
+    `INSERT INTO message_tags (msg_id, tag_id) SELECT DISTINCT msg_id, tag_id FROM json_populate_recordset(NULL::message_tags, $1);`,
     [JSON.stringify(junction)]
   );
 };
 
 export const addComments = async (client) => {
-  const { msgs, allTags } = await generateMessage(client, 20);
+  const { msgs, allTags } = await generateMessage(client, 200);
 
   const { rows: allMsgs } = await client.sql`SELECT id FROM messages`;
 
-  const comments = msgs.map((x, i) => ({ ...x, msg_id: allMsgs[Math.floor(i / 2)].id }));
+  const comments = msgs.map((x, i) => ({
+    ...x,
+    parent_id: allMsgs[Math.floor(i / 2)].id,
+  }));
+
+  await client.sql`INSERT INTO hashtag (tag) (SELECT DISTINCT tag FROM unnest(${allTags.flat()}::text[]) as tag) ON CONFLICT DO NOTHING;`;
+
+  const {rows: tagIds} = await client.sql`select * from hashtag as t WHERE t.tag = ANY(${allTags.flat()})`
+
+  const { rows: msgIds } = await client.query(
+    `INSERT INTO messages (message, created, parent_id, user_id) SELECT message, created, parent_id, user_id FROM json_populate_recordset(NULL::messages, $1) RETURNING id;`,
+    [JSON.stringify(comments)]
+  );
+
+  const junction = msgIds
+    .map((x, i) =>
+      allTags[i].map((y) => ({
+        msg_id: x.id,
+        tag_id: tagIds.find((z) => z.tag == y).id,
+      }))
+    )
+    .flat();
 
   await client.query(
-    `INSERT INTO comments (msg_id, message, created, user_id) SELECT msg_id, message, created, user_id FROM json_populate_recordset(NULL::comments, $1) RETURNING id;`,
-    [JSON.stringify(comments)]
+    `INSERT INTO message_tags (msg_id, tag_id) SELECT DISTINCT msg_id, tag_id FROM json_populate_recordset(NULL::message_tags, $1);`,
+    [JSON.stringify(junction)]
   );
 };

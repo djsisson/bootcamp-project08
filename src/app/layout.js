@@ -15,10 +15,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header></Header>
-        <Sidebar></Sidebar>
-        {children}
-        <Footer></Footer>
+        <div className="flex flex-col gap-4" >
+          <Header></Header>
+          
+          <div className="flex gap-4 relative"><Sidebar></Sidebar>{children}</div>
+          
+          <Footer></Footer>
+        </div>
       </body>
     </html>
   );

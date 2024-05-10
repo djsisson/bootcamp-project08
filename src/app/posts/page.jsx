@@ -1,10 +1,10 @@
 import { sql } from "@vercel/postgres";
-import Link from "next/link";
+import Post from "../Components/Post";
 
 
 export default async function posts() {
 
-const {rows: msgs} = await sql`SELECT * from messages;`; 
+const {rows: msgs} = await sql`SELECT m.*, u.username from messages as m INNER JOIN users as u ON m.user_id = u.id where parent_id is null;`; 
 
-return(<div>{msgs.map((x)=><div key={x.id}><Link href={`/posts/${x.id}`}>{x.message}</Link></div>)}</div>)
+return(<div>{msgs.map((x)=><Post key={x.id} post={x}></Post>)}</div>)
 }
