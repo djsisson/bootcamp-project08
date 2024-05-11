@@ -1,6 +1,8 @@
 "use client";
-import { handleLogin } from "../lib/actions";
+
+import { useRouter } from "next/navigation";
 
 export default function LoginButton() {
-  return <button onClick={async () => await handleLogin()}>Login</button>
+  const router = useRouter();
+  return <button onClick={() => router.push("/login")}>Login</button>;
 }

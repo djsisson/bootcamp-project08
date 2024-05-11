@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* Box sizing rules */
 *,
 *::before,
@@ -95,4 +94,108 @@ svg {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+:root {
+  --fs1: 1rem;
+  --fs2: 2rem;
+  --fs3: 3rem;
+  --boxshadow3: light-dark(hsla(0, 0%, 0%, 0.6), hsla(0, 0%, 100%, 0.8));
+  --boxshadow2: light-dark(hsla(0, 0%, 0%, 0.4), hsla(0, 0%, 100%, 0.6));
+  --boxshadow1: light-dark(hsla(0, 0%, 0%, 0.2), hsla(0, 0%, 100%, 0.4));
+}
+
+textarea,
+input,
+button {
+  font-size: var(--fs1);
+  font-family: inherit;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 0px 1px var(--boxshadow1), 0 1px 2px var(--boxshadow1);
+  line-height: 1.5;
+  margin: 0;
+}
+button {
+  font-weight: 500;
+  text-align: center;
+}
+
+textarea:hover,
+input:hover,
+button:hover {
+  box-shadow: 0 0px 1px var(--boxshadow3), 0 1px 2px var(--boxshadow1);
+  cursor: pointer;
+}
+
+button:active {
+  box-shadow: 0 0px 1px var(--boxshadow2);
+  transform: translateY(1px);
+}
+
+.icon-select {
+  width: min(100px, 15svw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  z-index: 15;
+  position: relative;
+  filter: saturate(0.8);
+}
+
+.icon-container[active="false"]:not(:hover) {
+  filter: grayscale(100%);
+}
+
+.icon-select:hover,
+.icon-container[active="true"]:not(:hover) {
+  cursor: pointer;
+  filter: saturate(2);
+}
+
+.icon-container {
+  position: relative;
+  --bgcolour: white;
+  width: min(100px, 15svw);
+}
+
+.icon-container::after {
+  position: absolute;
+  content: " ";
+  inset: 0;
+  opacity: 0;
+  z-index: 13;
+  border-radius: 50%;
+  width: 100%;
+  transition: opacity 1s ease;
+  background-image: conic-gradient(
+    from 45deg,
+    var(--bgcolour),
+    white,
+    var(--bgcolour)
+  );
+}
+
+.icon-container::before {
+  position: absolute;
+  content: " ";
+  inset: 0;
+  opacity: 0;
+  z-index: 13;
+  border-radius: 50%;
+  width: 100%;
+  background-image: conic-gradient(
+    from 135deg,
+    var(--bgcolour),
+    white,
+    var(--bgcolour)
+  );
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+
+.icon-container:hover::after,
+.icon-container[active="true"]::after {
+  opacity: 1;
+  box-shadow: 0 0 10px 5px var(--bgcolour);
 }

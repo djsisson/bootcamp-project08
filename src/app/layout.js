@@ -15,11 +15,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex flex-col gap-4" >
+        <div className="flex flex-col gap-4 min-h-svh">
           <Header></Header>
-          
-          <div className="flex gap-4 relative"><Sidebar></Sidebar>{children}</div>
-          
+
+          <div className="flex gap-4 relative flex-1">
+            <Sidebar></Sidebar>
+            <div className="flex flex-1 items-start justify-center">
+              {children}
+            </div>
+          </div>
+
           <Footer></Footer>
         </div>
       </body>
