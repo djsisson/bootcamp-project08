@@ -8,10 +8,13 @@ import EditPost from "@/app/Components/EditPost";
 import { upsertTags } from "@/app/lib/helper_functions";
 import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 0
 export default async function Posts({ params: { id }, searchParams }) {
   const { rows: mainMsg } =
     await sql`SELECT m.*, u.username, i.path, t.colour from messages as m INNER JOIN users as u ON m.user_id = u.id join icons i on i.id = u.icon_id join themes t on t.id = i.theme_id where m.id = ${id};`;
+
+  if (!mainMsg[0]) return redirect(`/`);
+
   const { rows: msg } =
     await sql`SELECT m.*, u.username, i.path, t.colour from messages as m INNER JOIN users as u ON m.user_id = u.id join icons i on i.id = u.icon_id join themes t on t.id = i.theme_id where parent_id=${id} ORDER BY m.created DESC;`;
   if (searchParams?.sort == "asc") msg?.reverse();
@@ -43,7 +46,12 @@ export default async function Posts({ params: { id }, searchParams }) {
         <Sort url={`${id}/`}></Sort>
       </div>
       <div className="grid grid-cols-6 gap-4 pb-4">
-        <Post key={mainMsg[0].id} post={mainMsg[0]} parent_id={id}></Post>
+        <Post
+          key={mainMsg[0].id}
+          post={mainMsg[0]}
+          parent_id={id}
+          curUser={isLoggedIn}
+        ></Post>
       </div>
       {isLoggedIn ? (
         <EditPost

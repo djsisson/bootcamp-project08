@@ -1,9 +1,11 @@
 import { sql } from "@vercel/postgres";
 import Post from "@/app/Components/Post";
 import Sort from "@/app/Components/Sort";
+import { cookies } from "next/headers";
 import { Suspense } from "react";
-export const dynamic = "force-dynamic"
+export const revalidate = 0;
 export default async function UserPosts({ params: { id }, searchParams }) {
+  const isLoggedIn = cookies().get("userid")?.value;
   const { rows: msg } =
     await sql`SELECT m.*, u.username, i.path, t.colour from messages m JOIN users u ON m.user_id = u.id join icons i on i.id = u.icon_id join themes t on t.id = i.theme_id WHERE u.id = ${id} ORDER BY m.created DESC;`;
   if (searchParams?.sort == "asc") msg?.reverse();
@@ -15,7 +17,9 @@ export default async function UserPosts({ params: { id }, searchParams }) {
       <div className="grid grid-cols-6 gap-4">
         {msg.length == 0
           ? `No messages found for user ${id}`
-          : msg.map((x) => <Post key={x.id} post={x}></Post>)}
+          : msg.map((x) => (
+              <Post key={x.id} post={x} curUser={isLoggedIn}></Post>
+            ))}
       </div>
     </Suspense>
   );

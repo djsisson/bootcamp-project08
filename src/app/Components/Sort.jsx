@@ -10,6 +10,8 @@ export default function Sort({ url }) {
   return (
     <div>
       <select
+        title="Sort Order"
+        name="Sort Order"
         className="cursor-pointer"
         defaultValue={"desc"}
         onChange={onChange}

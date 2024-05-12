@@ -39,7 +39,7 @@ join (
     "use server";
     const userToCreate = Object.fromEntries(formData);
     const { rows: userId } =
-      await sql`INSERT INTO users (username, first_name, last_name, email, icon_id) VALUES (${userToCreate.username}, ${userToCreate.first_name}, ${userToCreate.last_name}, ${userToCreate.email}, ${icons[0].themes[0].icons[0].id}) ON CONFLICT DO NOTHING RETURNING *`;
+      await sql`INSERT INTO users (username, first_name, last_name, email, icon_id) VALUES (${userToCreate.username}, ${userToCreate.first_name}, ${userToCreate.last_name}, ${userToCreate.email}, ${userToCreate.icon_id}) ON CONFLICT DO NOTHING RETURNING *`;
 
     if (userId.length != 0) {
       cookies().set("userid", userId[0].id);
@@ -52,10 +52,10 @@ join (
   }
 
   return (
-      <UserForm
-        newUserFunction={newUserFunction}
-        randomUser={newRandomUser}
-        icons={icons[0]}
-      ></UserForm>
+    <UserForm
+      newUserFunction={newUserFunction}
+      randomUser={newRandomUser}
+      icons={icons[0].themes}
+    ></UserForm>
   );
 }

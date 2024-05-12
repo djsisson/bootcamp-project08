@@ -2,7 +2,7 @@
 
 import SubmitButton from "./Submit";
 
-export default function NewPost({ newPostHandler }) {
+export default function NewPost({ newPostHandler, postButtonText="Post" }) {
   const onSubmit = async (e) => {
     await e.target.requestSubmit();
     e.target.reset();
@@ -23,7 +23,7 @@ export default function NewPost({ newPostHandler }) {
             placeholder="Message ..."
           />
         </div>
-        <SubmitButton displayText={"Post"}></SubmitButton>
+        <SubmitButton displayText={postButtonText}></SubmitButton>
       </form>
     </div>
   );

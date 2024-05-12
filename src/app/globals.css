@@ -144,7 +144,7 @@ button:active {
 }
 
 .icon-container[active="false"]:not(:hover) {
-  filter: grayscale(100%);
+  filter: grayscale(50%);
 }
 
 .icon-select:hover,
@@ -198,4 +198,21 @@ button:active {
 .icon-container[active="true"]::after {
   opacity: 1;
   box-shadow: 0 0 10px 5px var(--bgcolour);
+}
+
+.element-selector {
+  background-repeat: no-repeat;
+  width: var(--fs3);
+  aspect-ratio: 1;
+  cursor: pointer;
+}
+
+.element-selector[active="false"]:not(:hover) {
+  filter: grayscale(50%);
+}
+
+.element-selector:hover,
+.element-selector[active="true"] {
+  cursor: pointer;
+  filter: drop-shadow(5px 5px 4px var(--bgcolour)) saturate(2);
 }

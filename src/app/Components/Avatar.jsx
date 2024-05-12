@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Avatar({ icon, clickHandler, link }) {
+export default function Avatar({ icon, link }) {
   if (!icon) return <div></div>;
 
   return (

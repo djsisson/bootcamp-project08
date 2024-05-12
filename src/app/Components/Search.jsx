@@ -33,6 +33,8 @@ export default function SearchTags({ search: searchFunction, initialValue }) {
         <input
           className="searchText relative pl-8 bg-search-icon bg-no-repeat bg-[length:2rem_2rem] bg-[centre_1rem] w-48"
           type="search"
+          name="Search"
+          title="Search"
           onChange={onChange}
           placeholder="Search..."
         ></input>
@@ -51,7 +53,7 @@ export default function SearchTags({ search: searchFunction, initialValue }) {
       </div>
 
       {
-        <ul className="pt-4 flex flex-col gap-2">
+        <div className="pt-4 flex flex-col gap-2">
           {tagsDisplay
             ? tagsDisplay.map((x) => (
                 <Link
@@ -63,11 +65,11 @@ export default function SearchTags({ search: searchFunction, initialValue }) {
                       : " hover:bg-blue-400"
                   }`}
                 >
-                  <li>{x.tag}</li>
+                  <div>{x.tag}</div>
                 </Link>
               ))
             : null}
-        </ul>
+        </div>
       }
     </div>
   );

@@ -2,7 +2,7 @@ import { sql } from "@vercel/postgres";
 import Post from "@/app/Components/Post";
 import Sort from "@/app/Components/Sort";
 import { cookies } from "next/headers";
-export const dynamic = "force-dynamic";
+export const revalidate = 0
 export default async function UserPosts({ searchParams }) {
   const isLoggedIn = cookies().get("userid")?.value;
   const { rows: msg } =

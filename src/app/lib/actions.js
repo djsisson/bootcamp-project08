@@ -18,8 +18,13 @@ export async function handleLogout() {
   redirect("/");
 }
 
-export async function deleteMessage(id){
-  await sql`DELETE FROM messages where id=${id}`
+export async function deleteMessage(id) {
+  try {
+    await sql`DELETE FROM messages where id=${id}`;
+  } catch (error) {
+    console.log(error);
+  }
+
   revalidatePath("/");
   revalidatePath("/posts");
   revalidatePath("/");

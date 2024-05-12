@@ -6,7 +6,7 @@ import NewPost from "../Components/NewPost";
 import { revalidatePath } from "next/cache";
 import { upsertTags } from "../lib/helper_functions";
 import { Suspense } from "react";
-export const dynamic = "force-dynamic";
+export const revalidate = 0
 export default async function posts({ searchParams }) {
   const isLoggedIn = cookies().get("userid")?.value;
 
@@ -27,7 +27,7 @@ export default async function posts({ searchParams }) {
 
   try {
     const { rows: msgs } =
-      await sql`SELECT m.*, u.username, i.path, t.colour, m.created from messages as m INNER JOIN users as u ON m.user_id = u.id join icons i on i.id = u.icon_id join themes t on t.id = i.theme_id where parent_id is null ORDER BY m.created DESC;`;
+      await sql`SELECT m.*, u.username, i.path, t.colour, m.created from messages as m INNER JOIN users as u ON m.user_id = u.id join icons i on i.id = u.icon_id join themes t on t.id = i.theme_id where parent_id is null ORDER BY m.created DESC LIMIT 50;`;
     if (searchParams?.sort == "asc") msgs?.reverse();
     return (
       <Suspense fallback={<p>Loading Posts...</p>}>

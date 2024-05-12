@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Build a comment form
+Overview
+You've built a simple blog, your task now is to embellish it. Use database relationships to add a comments table. Add categories and tags to your posts. Add a form to create new comments. Add an edit page that populates the form with the post data and allows you save changes to the database.
 
-## Getting Started
+You can use Vercel Postgres or Supabase, so long as Postgres is the database.
 
-First, run the development server:
+User Stories
+🐿️ As a user, I want to browse a list of posts, sortable by ascending or descending order
+🐿️ As a user, I want to see a list of categories, and click on a category to see a list of posts in that category
+🐿️ As a user, I want to be able to leave a comment sharing my thoughts on each post
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Completed the above goals, using hashtags instead of categories
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Stretch Goals
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+allow categorisation at creation time using hashtags, can view all posts for a given hastag using search on teh side, im not sure if this counts
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Allow Edit post.. can only edit your own post
 
-## Learn More
+Allow delete post... again can only delete your own post
 
-To learn more about Next.js, take a look at the following resources:
+Allow edit comment, can only edit own comments on posts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+This experience was incredibly frustrating, i had no end of caching issues, at one point i had wiped my db, but could still see everything in it, also would randomly get fetch failures due to caching, in the end i switched to revalidate = 0 to force each page to revalidate everytime.
+some of teh next js docs were describing features that aren't even in release yet but didn't say anywhere (useformactions)
+i switched to normal sql, and although i got it in the end, i can def see the appeal of using an orm
+I needed way more time with tailwind, i can see the appeal, but need a lot more practice
+Same with Next js, the server/client component model, feels like it has made it much harder.. i honestly feel like im going backwards these past couple of weeks
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

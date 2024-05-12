@@ -2,10 +2,16 @@
 
 import SubmitButton from "./Submit";
 import { useSearchParams, useRouter } from "next/navigation";
+import IconPicker from "./IconPicker";
+import { useState, useEffect } from "react";
 
 export default function UserForm({ newUserFunction, randomUser, icons }) {
   const params = useSearchParams();
   const router = useRouter();
+  const [currentIcon, setCurrentIcon] = useState(0);
+  useEffect(() => {
+    setCurrentIcon(icons[0].icons[0].id);
+  }, [icons]);
 
   return (
     <form
@@ -68,7 +74,15 @@ export default function UserForm({ newUserFunction, randomUser, icons }) {
           defaultValue={randomUser.email}
         />
       </div>
-
+      <div>
+        <input
+          type="hidden"
+          id="icon_id"
+          name="icon_id"
+          value={currentIcon}
+        ></input>
+      </div>
+      <IconPicker icons={icons} setIcon={setCurrentIcon} curIcon={currentIcon}></IconPicker>
       <div className="flex gap-4">
         <SubmitButton displayText="Create"></SubmitButton>
         <button type="button" onClick={() => router.push("/")}>

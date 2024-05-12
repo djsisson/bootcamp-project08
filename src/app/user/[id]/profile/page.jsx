@@ -8,7 +8,7 @@ export default async function UserProfile() {
   const isLoggedIn = cookies().get("userid")?.value;
   const { rows: currentUser } =
     await sql`SELECT u.*, i.theme_id From users u join icons i ON u.icon_id = i.id where u.id = ${isLoggedIn}`;
-
+  if (!currentUser[0]) redirect("/");
   const { rows: icons } = await sql`select
     json_agg(
             json_build_object(
@@ -46,7 +46,7 @@ join (
       cookies().set("userid", userId[0].id);
       revalidatePath("/");
       revalidatePath("/posts");
-      return redirect("/user/${isLoggedIn}/profile");
+      return redirect(`/user/${isLoggedIn}/profile`);
     } else {
       return redirect(`/user/${isLoggedIn}/profile?x=invalid`);
     }
@@ -57,7 +57,7 @@ join (
       <EditUserForm
         editUserFunction={editUserFunction}
         currentUser={currentUser[0]}
-        icons={icons[0]}
+        icons={icons[0].themes}
       ></EditUserForm>
     </div>
   );

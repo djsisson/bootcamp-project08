@@ -4,9 +4,15 @@ import SubmitButton from "./Submit";
 import BackButton from "./BackButton";
 import { useSearchParams } from "next/navigation";
 import LogoutButton from "./LogoutButton";
+import IconPicker from "./IconPicker";
+import { useState, useEffect } from "react";
 
 export default function EditUserForm({ editUserFunction, currentUser, icons }) {
   const params = useSearchParams();
+  const [currentIcon, setCurrentIcon] = useState(0);
+  useEffect(() => {
+    setCurrentIcon(currentUser.icon_id);
+  }, [currentUser]);
 
   return (
     <form
@@ -74,12 +80,18 @@ export default function EditUserForm({ editUserFunction, currentUser, icons }) {
           type="hidden"
           id="icon_id"
           name="icon_id"
-          defaultValue={currentUser.icon_id}
+          value={currentIcon}
         ></input>
       </div>
+      <IconPicker
+        icons={icons}
+        setIcon={setCurrentIcon}
+        curIcon={currentIcon}
+        curTheme={icons.findIndex((x) => x.id == currentUser.theme_id)}
+      ></IconPicker>
       <div className="flex justify-between">
         <div className="flex gap-4">
-          <SubmitButton displayText="Edit"></SubmitButton>
+          <SubmitButton displayText="Save"></SubmitButton>
           <BackButton displayText="Cancel"></BackButton>
         </div>
         <LogoutButton></LogoutButton>

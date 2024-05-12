@@ -8,7 +8,7 @@ import NewPost from "@/app/Components/NewPost";
 import { Suspense } from "react";
 import { upsertTags } from "@/app/lib/helper_functions";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 0
 export default async function Posts({ params: { id }, searchParams }) {
   const { rows: mainMsg } =
     await sql`SELECT m.*, u.username, i.path, t.colour from messages as m INNER JOIN users as u ON m.user_id = u.id join icons i on i.id = u.icon_id join themes t on t.id = i.theme_id where m.id = ${id};`;
@@ -49,7 +49,10 @@ export default async function Posts({ params: { id }, searchParams }) {
         ></Post>
       </div>
       {isLoggedIn ? (
-        <NewPost newPostHandler={NewCommentFunction}></NewPost>
+        <NewPost
+          newPostHandler={NewCommentFunction}
+          postButtonText="Comment"
+        ></NewPost>
       ) : null}
       <div className="grid grid-cols-6 gap-4 pt-4">
         {msg.map((x) => (
