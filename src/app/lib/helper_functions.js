@@ -1,4 +1,6 @@
 import { faker } from "@faker-js/faker";
+import { db } from "@vercel/postgres";
+import { revalidatePath } from "next/cache";
 
 export const getHashTags = (val) => {
   const re = new RegExp(/#[\p{L}0-9-_]+/giu);
@@ -37,15 +39,20 @@ export const randomName = () => {
   };
 };
 
-export const upsertTags = async (msgid, tags, client, del = false) => {
-  if (del) {
+export const upsertTags = async (msgid, msg, editmsg = false) => {
+  const tags = getHashTags(msg);
+
+  if (tags.length == 0) return;
+  tags.forEach((x) => revalidatePath(`/posts/tags/${x.slice(1)}`));
+
+  const client = await db.connect();
+
+  if (editmsg) {
     client.sql`DELETE FROM message_tags WHERE msg_id = ${msgid};`;
   }
 
-  if (tags.length == 0) return;
+  await client.sql`INSERT INTO hashtag (tag) (SELECT DISTINCT tag FROM unnest(${tags}::text[]) as tag) ON CONFLICT DO NOTHING;`;
 
-  await client.sql
-    `INSERT INTO hashtag (tag) (SELECT DISTINCT tag FROM unnest(${tags}::text[]) as tag) ON CONFLICT DO NOTHING;`;
-
-  await client.sql` INSERT INTO message_tags (SELECT m.id as msg_id, tag_id FROM messages AS m CROSS JOIN (select t.id as tag_id from hashtag as t WHERE t.tag = ANY(${tags})) WHERE m.id = ${msgid});`
+  await client.sql` INSERT INTO message_tags (SELECT m.id as msg_id, tag_id FROM messages AS m CROSS JOIN (select t.id as tag_id from hashtag as t WHERE t.tag = ANY(${tags})) WHERE m.id = ${msgid});`;
+  await client.end();
 };

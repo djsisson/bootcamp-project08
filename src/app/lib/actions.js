@@ -1,7 +1,7 @@
 "use server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
+import { sql } from "@vercel/postgres";
 import { revalidatePath } from "next/cache";
 
 export async function handleLogin() {
@@ -16,4 +16,12 @@ export async function handleLogout() {
   revalidatePath("/");
   revalidatePath("/posts");
   redirect("/");
+}
+
+export async function deleteMessage(id){
+  await sql`DELETE FROM messages where id=${id}`
+  revalidatePath("/");
+  revalidatePath("/posts");
+  revalidatePath("/");
+  revalidatePath(`/posts/${id}`);
 }

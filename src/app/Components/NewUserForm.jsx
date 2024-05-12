@@ -24,7 +24,7 @@ export default function UserForm({ newUserFunction, randomUser, icons }) {
           required
           pattern="^[a-zA-Z0-9_\-]+$"
           minLength="2"
-          maxLength="20"
+          maxLength="30"
           defaultValue={randomUser.username}
         />
       </div>

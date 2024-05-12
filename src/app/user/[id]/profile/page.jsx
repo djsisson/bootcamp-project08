@@ -6,7 +6,7 @@ export default async function Posts({ params: { id } }) {
   //     await sql`SELECT m.*, u.username from messages as m INNER JOIN users as u ON m.user_id = u.id where m.id = ${id} or parent_id=${id};`;
 
   return (
-    <div>
+    <div className="flex justify-center items-center">
       this is user profile<LogoutButton></LogoutButton>
     </div>
   );

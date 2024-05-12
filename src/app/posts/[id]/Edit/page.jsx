@@ -4,8 +4,9 @@ import Sort from "@/app/Components/Sort";
 import BackButton from "@/app/Components/BackButton";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import NewPost from "@/app/Components/NewPost";
+import EditPost from "@/app/Components/EditPost";
 import { upsertTags } from "@/app/lib/helper_functions";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 export default async function Posts({ params: { id }, searchParams }) {
@@ -17,20 +18,22 @@ export default async function Posts({ params: { id }, searchParams }) {
 
   const isLoggedIn = cookies().get("userid")?.value;
 
-  async function NewCommentFunction(formData) {
+  async function EditCommentFunction(formData) {
     "use server";
     try {
       const msg = formData.get("message");
       const { rows: msgId } =
-        await sql`INSERT INTO messages (user_id, message, parent_id) VALUES (${isLoggedIn}, ${msg}, ${id}) RETURNING id`;
-      await upsertTags(msgId[0]?.id, msg, false);
+        await sql`UPDATE messages set message = ${msg} where id = ${id} RETURNING id`;
+      await upsertTags(msgId[0]?.id, msg, true);
       revalidatePath("/");
       revalidatePath("/posts");
       revalidatePath(`/posts/${id}`);
       revalidatePath("/tags");
+      revalidatePath(`/posts/${id}/Edit`);
     } catch (error) {
       console.log(error);
     }
+    return redirect(`/posts/${id}`);
   }
 
   return (
@@ -40,15 +43,13 @@ export default async function Posts({ params: { id }, searchParams }) {
         <Sort url={`${id}/`}></Sort>
       </div>
       <div className="grid grid-cols-6 gap-4 pb-4">
-        <Post
-          key={mainMsg[0].id}
-          post={mainMsg[0]}
-          curUser={isLoggedIn}
-          parent_id={id}
-        ></Post>
+        <Post key={mainMsg[0].id} post={mainMsg[0]} parent_id={id}></Post>
       </div>
       {isLoggedIn ? (
-        <NewPost newPostHandler={NewCommentFunction}></NewPost>
+        <EditPost
+          newPostHandler={EditCommentFunction}
+          originalMessage={mainMsg[0].message}
+        ></EditPost>
       ) : null}
       <div className="grid grid-cols-6 gap-4 pt-4">
         {msg.map((x) => (
