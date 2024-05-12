@@ -5,6 +5,7 @@ import Sort from "../Components/Sort";
 import NewPost from "../Components/NewPost";
 import { revalidatePath } from "next/cache";
 import { upsertTags } from "../lib/helper_functions";
+import { Suspense } from "react";
 export const dynamic = "force-dynamic";
 export default async function posts({ searchParams }) {
   const isLoggedIn = cookies().get("userid")?.value;
@@ -29,7 +30,7 @@ export default async function posts({ searchParams }) {
       await sql`SELECT m.*, u.username, i.path, t.colour, m.created from messages as m INNER JOIN users as u ON m.user_id = u.id join icons i on i.id = u.icon_id join themes t on t.id = i.theme_id where parent_id is null ORDER BY m.created DESC;`;
     if (searchParams?.sort == "asc") msgs?.reverse();
     return (
-      <>
+      <Suspense fallback={<p>Loading Posts...</p>}>
         {isLoggedIn ? (
           <NewPost newPostHandler={NewPostFunction}></NewPost>
         ) : null}
@@ -41,7 +42,7 @@ export default async function posts({ searchParams }) {
             <Post key={x.id} post={x} curUser={isLoggedIn}></Post>
           ))}
         </div>
-      </>
+      </Suspense>
     );
   } catch (error) {
     console.log(error);

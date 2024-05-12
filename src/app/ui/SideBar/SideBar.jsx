@@ -3,7 +3,6 @@
 import SearchTags from "@/app/Components/Search";
 import { sql } from "@vercel/postgres";
 import Link from "next/link";
-import LoginButton from "@/app/Components/LoginButton";
 import { cookies } from "next/headers";
 import Avatar from "@/app/Components/Avatar";
 
@@ -25,7 +24,7 @@ export default async function Sidebar() {
   let userIcon = null;
   try {
     userIcon = isLoggedIn
-      ? await sql`select i.path, t.colour from users u join icons i on i.id = u.icon_id join themes t on t.id = i.theme_id where u.id = ${isLoggedIn}`
+      ? await sql`select u.username, i.path, t.colour from users u join icons i on i.id = u.icon_id join themes t on t.id = i.theme_id where u.id = ${isLoggedIn}`
       : null;
   } catch (error) {
     console.log(error);
@@ -34,19 +33,28 @@ export default async function Sidebar() {
   return (
     <div className="max-h-svh border border-solid sticky top-0 p-4 rounded-r-lg">
       {isLoggedIn ? (
-        <Avatar
-          icon={userIcon?.rows[0]}
-          link={`/user/${isLoggedIn}/profile`}
-        ></Avatar>
+        <>
+          <Avatar
+            icon={userIcon?.rows[0]}
+            link={`/user/${isLoggedIn}/profile`}
+          ></Avatar>
+          <h2 className="flex justify-center text-xs italic py-1 ">
+            @{userIcon?.rows[0].username}
+          </h2>
+        </>
       ) : (
-        <LoginButton></LoginButton>
+        <Link href={"/login"}>
+          <h2 className="flex rounded-lg justify-center text-xl my-2 py-1 hover:bg-blue-400">
+            Login
+          </h2>
+        </Link>
       )}
       <Link href={"/"}>
-        <h2 className="flex rounded-lg justify-center text-xl my-2 py-2 hover:bg-blue-400">
+        <h2 className="flex rounded-lg justify-center text-xl my-2 py-1 hover:bg-blue-400">
           Home
         </h2>
       </Link>
-      <h2 className="flex justify-center text-xl py-4 ">Search</h2>
+      <h2 className="flex justify-center text-xl py-2 ">Search</h2>
       <SearchTags search={searchTags} initialValue={initialValue}></SearchTags>
     </div>
   );

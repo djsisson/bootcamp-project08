@@ -57,7 +57,7 @@ export default function SearchTags({ search: searchFunction, initialValue }) {
                 <Link
                   key={x.tag}
                   href={`/posts/tags/${x.tag.slice(1)}`}
-                  className={`text-lg px-4 py-2 rounded-lg link${
+                  className={`text-lg px-4 py-1 rounded-lg link${
                     pathname === `/posts/tags/${x.tag.slice(1)}`
                       ? " bg-blue-600"
                       : " hover:bg-blue-400"

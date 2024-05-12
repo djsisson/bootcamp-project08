@@ -9,7 +9,11 @@ export default function Sort({ url }) {
   };
   return (
     <div>
-      <select defaultValue={"desc"} onChange={onChange}>
+      <select
+        className="cursor-pointer"
+        defaultValue={"desc"}
+        onChange={onChange}
+      >
         <option value="desc">Newest</option>
         <option value="asc">Oldest</option>
       </select>

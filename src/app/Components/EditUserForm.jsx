@@ -1,18 +1,19 @@
 "use client";
 
 import SubmitButton from "./Submit";
-import { useSearchParams, useRouter } from "next/navigation";
+import BackButton from "./BackButton";
+import { useSearchParams } from "next/navigation";
+import LogoutButton from "./LogoutButton";
 
-export default function UserForm({ newUserFunction, randomUser, icons }) {
+export default function EditUserForm({ editUserFunction, currentUser, icons }) {
   const params = useSearchParams();
-  const router = useRouter();
 
   return (
     <form
-      action={newUserFunction}
+      action={editUserFunction}
       className="flex flex-col gap-4 justify-center h-full"
     >
-      {params.get("x") ? "Failed to create New User Please Try Again" : null}
+      {params.get("x") ? "Failed to Edit User Please Try Again" : null}
       <div className="flex flex-col gap-4">
         <label htmlFor="username">Username</label>
         <input
@@ -23,7 +24,7 @@ export default function UserForm({ newUserFunction, randomUser, icons }) {
           pattern="^[a-zA-Z0-9_\-]+$"
           minLength="2"
           maxLength="30"
-          defaultValue={randomUser.username}
+          defaultValue={currentUser.username}
         />
       </div>
 
@@ -38,7 +39,7 @@ export default function UserForm({ newUserFunction, randomUser, icons }) {
             pattern="^[a-zA-Z0-9_\-]+$"
             minLength="2"
             maxLength="20"
-            defaultValue={randomUser.first_name}
+            defaultValue={currentUser.first_name}
           />
         </div>
         <div className="flex flex-col gap-4">
@@ -51,7 +52,7 @@ export default function UserForm({ newUserFunction, randomUser, icons }) {
             pattern="^[a-zA-Z0-9_\-]+$"
             minLength="2"
             maxLength="20"
-            defaultValue={randomUser.last_name}
+            defaultValue={currentUser.last_name}
           />
         </div>
       </div>
@@ -65,15 +66,23 @@ export default function UserForm({ newUserFunction, randomUser, icons }) {
           required
           minLength="2"
           maxLength="50"
-          defaultValue={randomUser.email}
+          defaultValue={currentUser.email}
         />
       </div>
-
-      <div className="flex gap-4">
-        <SubmitButton displayText="Create"></SubmitButton>
-        <button type="button" onClick={() => router.push("/")}>
-          Cancel
-        </button>
+      <div>
+        <input
+          type="hidden"
+          id="icon_id"
+          name="icon_id"
+          defaultValue={currentUser.icon_id}
+        ></input>
+      </div>
+      <div className="flex justify-between">
+        <div className="flex gap-4">
+          <SubmitButton displayText="Edit"></SubmitButton>
+          <BackButton displayText="Cancel"></BackButton>
+        </div>
+        <LogoutButton></LogoutButton>
       </div>
     </form>
   );

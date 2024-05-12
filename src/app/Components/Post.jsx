@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Avatar from "./Avatar";
 import DeletePost from "./DeletePost";
+import { Suspense } from "react";
 
 export default function Post({ post, curUser, parent_id }) {
   if (!post) return <div></div>;
@@ -26,7 +27,7 @@ export default function Post({ post, curUser, parent_id }) {
   };
 
   return (
-    <>
+    <Suspense fallback={<p>Loading Post...</p>}>
       <div className="col-span-1">
         <Avatar
           icon={{ path: post.path, colour: post.colour }}
@@ -48,12 +49,12 @@ export default function Post({ post, curUser, parent_id }) {
                     className="text-xs italic"
                     href={`/posts/${post.parent_id}`}
                   >
-                    Parent Thread
+                    View Thread
                   </Link>
                 )
               ) : post.id == parent_id ? null : (
                 <Link className="text-xs italic" href={`/posts/${post.id}`}>
-                  Replies
+                  View Replies
                 </Link>
               )}
             </div>
@@ -66,6 +67,6 @@ export default function Post({ post, curUser, parent_id }) {
           </div>
         </div>
       </div>
-    </>
+    </Suspense>
   );
 }

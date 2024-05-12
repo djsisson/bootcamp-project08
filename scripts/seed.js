@@ -18,8 +18,7 @@ async function main() {
     // await addUsers(client);
     // await addMessages(client);
     // await addComments(client);
-    ;
-    console.log(data.rows[0].themes[0].icons);
+    
   } catch (error) {
     console.error(
       "An error occurred while attempting to create the database:",

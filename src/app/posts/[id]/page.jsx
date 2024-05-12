@@ -5,6 +5,7 @@ import BackButton from "@/app/Components/BackButton";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import NewPost from "@/app/Components/NewPost";
+import { Suspense } from "react";
 import { upsertTags } from "@/app/lib/helper_functions";
 
 export const dynamic = "force-dynamic";
@@ -34,7 +35,7 @@ export default async function Posts({ params: { id }, searchParams }) {
   }
 
   return (
-    <>
+    <Suspense fallback={<p>Loading Posts...</p>}>
       <div className="flex justify-between w-full pr-4 pb-4">
         <BackButton></BackButton>
         <Sort url={`${id}/`}></Sort>
@@ -55,6 +56,6 @@ export default async function Posts({ params: { id }, searchParams }) {
           <Post key={x.id} post={x} curUser={isLoggedIn} parent_id={id}></Post>
         ))}
       </div>
-    </>
+    </Suspense>
   );
 }

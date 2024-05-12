@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
           <div className="flex gap-4 relative flex-1">
             <Sidebar></Sidebar>
             <div className="flex flex-1 flex-col gap-4 items-center">
-              <div className="max-w-prose h-full">{children}</div>
+              <div className="max-w-prose h-full w-full">{children}</div>
             </div>
           </div>
 
